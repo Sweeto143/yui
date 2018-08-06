@@ -305,7 +305,6 @@ def echo(bot: Bot, update: Update):
         message.reply_text(args[1], quote=False)
     message.delete()
 
-
 @run_async
 def gdpr(bot: Bot, update: Update):
     update.effective_message.reply_text("Deleting identifiable data...")
