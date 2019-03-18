@@ -23,8 +23,8 @@ Hi {}, my name is {}!
 
 I'm a group manager bot maintained by [this wonderful person](tg://user?id={}). Big Thanks for Paul Larsen for making it opensource and for His hardwork. I'm built in python3, using the \
 python-telegram-bot library, and am fully opensource - you can find what makes me tick \
-[here](https://github.com/Sweeto143/tgbot)! and i am based on \
-[MarieBot](tg://user?id=BanhammerMarie_bot)!
+[here](https://github.com/PaulSonOfLars/tgbot)! and i am based on \
+[MarieBot](t.me/BanhammerMarie_bot)!
 
 Feel free to submit pull requests on github, or to contact my support group, @Darkstar085, with any bugs, questions \
 or feature requests you might have :)
