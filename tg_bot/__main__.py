@@ -26,7 +26,7 @@ python-telegram-bot library, and am fully opensource - you can find what makes m
 [here](https://github.com/PaulSonOfLars/tgbot)! and i am based on \
 [MarieBot](t.me/BanhammerMarie_bot)!
 
-Feel free to submit pull requests on github, or to contact my support group, @Darkstar085, with any bugs, questions \
+Feel free to submit pull requests on github, or to contact my support group, with any bugs, questions \
 or feature requests you might have :)
 
 You can find the list of available commands with /help.
