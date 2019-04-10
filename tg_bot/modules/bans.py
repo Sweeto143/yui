@@ -51,20 +51,17 @@ def ban(bot: Bot, update: Update, args: List[str]) -> str:
     log = "<b>{}:</b>" \
           "\n#BANNED" \
           "\n<b>• Admin:</b> {}" \
-          "\n<b>• User:</b> {}" \
-          "\n<b>• ID:</b> <code>{}</code>".format(html.escape(chat.title), mention_html(user.id, user.first_name), 
-                                                  mention_html(member.user.id, member.user.first_name), user_id)
-
-    reply = "{} has been banned!".format(mention_html(member.user.id, member.user.first_name))
+          "\n<b>• User:</b> {} (<code>{}</code>)".format(html.escape(chat.title),
+                                                       mention_html(user.id, user.first_name),
+                                                       mention_html(member.user.id, member.user.first_name),
+                                                       member.user.id)
     if reason:
         log += "\n<b>• Reason:</b> {}".format(reason)
-        reply += "\n<b>Reason:</b> <i>{}</i>".format(reason)
 
     try:
         chat.kick_member(user_id)
         bot.send_sticker(chat.id, BAN_STICKER)  # banhammer marie sticker
-        keyboard = []
-        message.reply_text(reply, reply_markup=keyboard, parse_mode=ParseMode.HTML)
+        message.reply_text("Banned O_o")
         return log
 
     except BadRequest as excp:
@@ -133,22 +130,20 @@ def temp_ban(bot: Bot, update: Update, args: List[str]) -> str:
 
     log = "<b>{}:</b>" \
           "\n#TEMP BANNED" \
-          "\n<b>Admin:</b> {}" \
-          "\n<b>User:</b> {} (<code>{}</code>)" \
-          "\n<b>Time:</b> {}".format(html.escape(chat.title),
+          "\n<b>• Admin:</b> {}" \
+          "\n<b>• User:</b> {} (<code>{}</code>)" \
+          "\n<b>• Time:</b> {}".format(html.escape(chat.title),
                                      mention_html(user.id, user.first_name),
                                      mention_html(member.user.id, member.user.first_name),
                                      member.user.id,
                                      time_val)
     if reason:
-        log += "\n<b>Reason:</b> {}".format(reason)
+        log += "\n<b>• Reason:</b> {}".format(reason)
 
     try:
         chat.kick_member(user_id, until_date=bantime)
-        keyboard = []
-        bot.send_sticker(update.effective_chat.id, BAN_STICKER)  # banhammer marie sticker
-        reply = "{} has been temporarily banned for {}!".format(mention_html(member.user.id, member.user.first_name),time_val)
-        message.reply_text(reply, reply_markup=keyboard, parse_mode=ParseMode.HTML)
+        bot.send_sticker(chat.id, BAN_STICKER)  # banhammer marie sticker
+        message.reply_text("Banned! User will be banned for {}.".format(time_val))
         return log
 
     except BadRequest as excp:
@@ -200,19 +195,16 @@ def kick(bot: Bot, update: Update, args: List[str]) -> str:
     res = chat.unban_member(user_id)  # unban on current user = kick
     if res:
         bot.send_sticker(chat.id, BAN_STICKER)  # banhammer marie sticker
-        keyboard = []
-        reply = "{} has been kicked!".format(mention_html(member.user.id, member.user.first_name))
-        message.reply_text(reply, reply_markup=keyboard, parse_mode=ParseMode.HTML)
-
+        message.reply_text("Kicked!")
         log = "<b>{}:</b>" \
               "\n#KICKED" \
-              "\n<b>Admin:</b> {}" \
-              "\n<b>User:</b> {} (<code>{}</code>)".format(html.escape(chat.title),
+              "\n<b>• Admin:</b> {}" \
+              "\n<b>• User:</b> {} (<code>{}</code>)".format(html.escape(chat.title),
                                                            mention_html(user.id, user.first_name),
                                                            mention_html(member.user.id, member.user.first_name),
                                                            member.user.id)
         if reason:
-            log += "\n<b>Reason:</b> {}".format(reason)
+            log += "\n<b>• Reason:</b> {}".format(reason)
 
         return log
 
@@ -237,31 +229,7 @@ def kickme(bot: Bot, update: Update):
     else:
         update.effective_message.reply_text("Huh? I can't :/")
 
-@run_async
-@bot_admin
-@can_restrict
-@loggable
-def banme(bot: Bot, update: Update):
-    user_id = update.effective_message.from_user.id
-    chat = update.effective_chat
-    user = update.effective_user
-    if is_user_admin(update.effective_chat, user_id):
-        update.effective_message.reply_text("I wish I could... but you're an admin.")
-        return
 
-    res = update.effective_chat.kick_member(user_id)  
-    if res:
-        update.effective_message.reply_text("No problem, banned.")
-        log = "<b>{}:</b>" \
-              "\n#BANME" \
-              "\n<b>User:</b> {}" \
-              "\n<b>ID:</b> <code>{}</code>".format(html.escape(chat.title),
-                                                    mention_html(user.id, user.first_name), user_id)
-        return log
-    
-    else:
-        update.effective_message.reply_text("Huh? I can't :/")
-        
 @run_async
 @bot_admin
 @can_restrict
@@ -299,92 +267,34 @@ def unban(bot: Bot, update: Update, args: List[str]) -> str:
 
     log = "<b>{}:</b>" \
           "\n#UNBANNED" \
-          "\n<b>Admin:</b> {}" \
-          "\n<b>User:</b> {} (<code>{}</code>)".format(html.escape(chat.title),
+          "\n<b>• Admin:</b> {}" \
+          "\n<b>• User:</b> {} (<code>{}</code>)".format(html.escape(chat.title),
                                                        mention_html(user.id, user.first_name),
                                                        mention_html(member.user.id, member.user.first_name),
                                                        member.user.id)
     if reason:
-        log += "\n<b>Reason:</b> {}".format(reason)
+        log += "\n<b>• Reason:</b> {}".format(reason)
 
     return log
 
-@run_async
-@bot_admin
-@can_restrict
-@user_admin
-@loggable
-def sban(bot: Bot, update: Update, args: List[str]) -> str:
-    chat = update.effective_chat  # type: Optional[Chat]
-    user = update.effective_user  # type: Optional[User]
-    message = update.effective_message  # type: Optional[Message]
-    
-    update.effective_message.delete()
-
-    user_id, reason = extract_user_and_text(message, args)
-
-    if not user_id:
-        return ""
-
-    try:
-        member = chat.get_member(user_id)
-    except BadRequest as excp:
-        if excp.message == "User not found":
-            return ""
-        else:
-            raise
-
-    if is_user_ban_protected(chat, user_id, member):
-        return ""
-
-    if user_id == bot.id:
-        return ""
-
-    log = "<b>{}:</b>" \
-          "\n# SILENTBAN" \
-          "\n<b>• Admin:</b> {}" \
-          "\n<b>• User:</b> {}" \
-          "\n<b>• ID:</b> <code>{}</code>".format(html.escape(chat.title), mention_html(user.id, user.first_name), 
-                                                  mention_html(member.user.id, member.user.first_name), user_id)
-    if reason:
-        log += "\n<b>• Reason:</b> {}".format(reason)
-
-    try:
-        chat.kick_member(user_id)
-        return log
-
-    except BadRequest as excp:
-        if excp.message == "Reply message not found":
-            return log
-        else:
-            LOGGER.warning(update)
-            LOGGER.exception("ERROR banning user %s in chat %s (%s) due to %s", user_id, chat.title, chat.id, excp.message)       
-    return ""
 
 __help__ = """
 Some people need to be publicly banned; spammers, annoyances, or just trolls.
 
 This module allows you to do that easily, by exposing some common actions, so everyone will see!
 
-
- - /banme: bans the user who issued the command.
  - /kickme: kicks the user who issued the command
 
 *Admin only:*
  - /ban <userhandle>: bans a user. (via handle, or reply)
  - /tban <userhandle> x(m/h/d): bans a user for x time. (via handle, or reply). m = minutes, h = hours, d = days.
  - /unban <userhandle>: unbans a user. (via handle, or reply)
- - /sban <userhandle>: silently bans a user. (via handle, or reply)
  - /kick <userhandle>: kicks a user, (via handle, or reply)
-
+ 
+ 
 An example of temporarily banning someone:
 `/tban @username 2h`; this bans a user for 2 hours.
 
-As for the silent ban, it shows no bot output results on banning a user. \
-That makes admins of chat quietly ban users without any expose.
-
-An example of banning someone silently:
-`/sban @username or 728762378`; this bans user silently and deletes command.
 """
 
 __mod_name__ = "Bans"
@@ -394,13 +304,9 @@ TEMPBAN_HANDLER = CommandHandler(["tban", "tempban"], temp_ban, pass_args=True, 
 KICK_HANDLER = CommandHandler("kick", kick, pass_args=True, filters=Filters.group)
 UNBAN_HANDLER = CommandHandler("unban", unban, pass_args=True, filters=Filters.group)
 KICKME_HANDLER = DisableAbleCommandHandler("kickme", kickme, filters=Filters.group)
-BANME_HANDLER = DisableAbleCommandHandler("banme", banme, filters=Filters.group)
-SBAN_HANDLER = CommandHandler("sban", sban, pass_args=True, filters=Filters.group)
 
 dispatcher.add_handler(BAN_HANDLER)
 dispatcher.add_handler(TEMPBAN_HANDLER)
 dispatcher.add_handler(KICK_HANDLER)
 dispatcher.add_handler(UNBAN_HANDLER)
 dispatcher.add_handler(KICKME_HANDLER)
-dispatcher.add_handler(BANME_HANDLER)
-dispatcher.add_handler(SBAN_HANDLER)
