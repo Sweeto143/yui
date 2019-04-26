@@ -14,3 +14,4 @@ wget
 gTTS
 telegram
 zalgo_text
+hurry.filesize
