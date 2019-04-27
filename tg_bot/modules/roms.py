@@ -3,8 +3,6 @@ import html
 import json
 import random
 import time
-import pyowm
-from pyowm import timeutils, exceptions
 from datetime import datetime
 from typing import Optional, List
 from hurry.filesize import size
@@ -38,10 +36,10 @@ def pixys(bot: Bot, update: Update):
     fetch = get(f'https://raw.githubusercontent.com/PixysOS-Devices/official_devices/master/{device}/build.json')
     if fetch.status_code == 200:
         usr = fetch.json()
-        reply_text = f"""*Download:* [{usr['response'][0]['filename']}]({usr['response'][0]['url']})
-*Size:* `{usr['response'][0]['size']}`
-*Rom Type:* `{usr['response'][0]['romtype']}`
-*Version:* `{usr['response'][0]['version']}`
+        reply_text = f""" * Download Pixys OS for {device} *
+
+• *Download:* [{usr['response'][0]['filename']}]({usr['response'][0]['url']})
+• *Version:* {usr['response'][0]['version']}
 """
     elif fetch.status_code == 404:
         reply_text="Device not found"
@@ -54,10 +52,11 @@ def superior(bot: Bot, update: Update):
     fetch = get(f'https://raw.githubusercontent.com/SuperiorOS/official_devices/pie/{device}.json')
     if fetch.status_code == 200 and str(fetch.json()['response']) != "[]":
         usr = fetch.json()
-        reply_text = f"""*Download:* [{usr['response'][-1]['filename']}]({usr['response'][-1]['url']})
-*Size:* `{usr['response'][-1]['size']}`
-*Rom Type:* `{usr['response'][0]['romtype']}`
-*Version:* `{usr['response'][-1]['version']}`
+        reply_text = f""" * Download Superior OS for {device} *
+
+• *Download:* [{usr['response'][-1]['filename']}]({usr['response'][-1]['url']})
+• *Rom Type:* {usr['response'][0]['romtype']}
+• *Version:* {usr['response'][-1]['version']}
 """
     else:
         reply_text="Device not found"
@@ -71,10 +70,11 @@ def dot(bot: Bot, update: Update):
     fetch = get(f'https://raw.githubusercontent.com/DotOS/ota_config/dot-p/{device}.json')
     if fetch.status_code == 200:
         usr = fetch.json()
-        reply_text = f"""*Download:* [{usr['response'][0]['filename']}]({usr['response'][0]['url']})
-*Size:* `{usr['response'][0]['size']}`
-*Version:* `{usr['response'][0]['version']}`
-*Device Changelog:* `{usr['response'][0]['changelog_device']}`
+        reply_text = f""" * Download Dot OS for {device} *
+
+• *Download:* [{usr['response'][0]['filename']}]({usr['response'][0]['url']})
+• *Version:* {usr['response'][0]['version']}
+• *Device Changelog:* {usr['response'][0]['changelog_device']}
 """
     elif fetch.status_code == 404:
         reply_text="Device not found"
