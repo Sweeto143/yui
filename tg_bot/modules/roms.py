@@ -7,13 +7,12 @@ from datetime import datetime
 from typing import Optional, List
 from hurry.filesize import size
 
-import requests
 from telegram import Message, Chat, Update, Bot, MessageEntity
 from telegram import ParseMode
 from telegram.ext import CommandHandler, run_async, Filters
 from telegram.utils.helpers import escape_markdown, mention_html
 
-from tg_bot import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, WHITELIST_USERS, BAN_STICKER
+from tg_bot import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, WHITELIST_USERS, BAN_STICKER, LOGGER
 from tg_bot.__main__ import GDPR
 from tg_bot.__main__ import STATS, USER_INFO
 from tg_bot.modules.disable import DisableAbleCommandHandler
@@ -22,12 +21,12 @@ from tg_bot.modules.helper_funcs.filters import CustomFilters
 
 from requests import get
 
-# DO NOT DELETE THIS PLEASE
-# Worked by @peaktogo on github and telegram
-# This module was inspired by Android Helper Bot by Vachounet
-# None of the code were taken from the bot, to avoid any more confusion.
+# DO NOT DELETE THIS, PLEASE.
+# Made by @peaktogoo on GitHub and Telegram.
+# This module was inspired by Android Helper Bot by Vachounet.
+# None of the code is taken from the bot itself, to avoid any more confusion.
 
-print("Original Android Modules by @peaktogoo on Telegram")
+LOGGER.info("Original Android Modules by @peaktogoo on Telegram")
 
 @run_async
 def pixys(bot: Bot, update: Update):
@@ -36,13 +35,21 @@ def pixys(bot: Bot, update: Update):
     fetch = get(f'https://raw.githubusercontent.com/PixysOS-Devices/official_devices/master/{device}/build.json')
     if fetch.status_code == 200:
         usr = fetch.json()
-        reply_text = f""" * Download Pixys OS for {device} *
+        response = usr['response'][0]
+        filename = response['filename']
+        url = response['url']
+        buildsize = response['size']
+        romtype = response['romtype']
+        version = response['version']
 
-• *Download:* [{usr['response'][0]['filename']}]({usr['response'][0]['url']})
-• *Version:* {usr['response'][0]['version']}
-"""
+        reply_text = (f" * Download Pixys OS for {device} *\n"
+
+                      f"• *Download:* [{filename}]({url})\n"
+                      f"• *Build size:* {buildsize}\n"
+                      f"• *Version:* {version}\n"
+                      f"• *Rom Type:* {romtype}")
     elif fetch.status_code == 404:
-        reply_text="Device not found"
+        reply_text = "Device not found."
     message.reply_text(reply_text, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
 
 @run_async
@@ -50,16 +57,23 @@ def superior(bot: Bot, update: Update):
     message = update.effective_message
     device = message.text[len('/superior '):]
     fetch = get(f'https://raw.githubusercontent.com/SuperiorOS/official_devices/pie/{device}.json')
-    if fetch.status_code == 200 and str(fetch.json()['response']) != "[]":
+    if fetch.status_code == 200:
         usr = fetch.json()
-        reply_text = f""" * Download Superior OS for {device} *
+        response = usr['response'][0]
+        filename = response['filename']
+        url = response['url']
+        buildsize = response['size']
+        romtype = response['romtype']
+        version = response['version']
 
-• *Download:* [{usr['response'][-1]['filename']}]({usr['response'][-1]['url']})
-• *Rom Type:* {usr['response'][0]['romtype']}
-• *Version:* {usr['response'][-1]['version']}
-"""
-    else:
-        reply_text="Device not found"
+        reply_text = (f" * Download Superior OS for {device} *\n"
+
+                      f"• *Download:* [{filename}]({url})\n"
+                      f"• *Build size:* {buildsize}\n"
+                      f"• *Version:* {version}\n"
+                      f"• *Rom Type:* {romtype}")
+    elif fetch.status_code == 404:
+        reply_text = "Device not found."
     message.reply_text(reply_text, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
 
 
@@ -70,35 +84,42 @@ def dot(bot: Bot, update: Update):
     fetch = get(f'https://raw.githubusercontent.com/DotOS/ota_config/dot-p/{device}.json')
     if fetch.status_code == 200:
         usr = fetch.json()
-        reply_text = f""" * Download Dot OS for {device} *
+        response = usr['response'][0]
+        filename = response['filename']
+        url = response['url']
+        buildsize = response['size']
+        version = response['version']
+        changelog = response['changelog_device']
 
-• *Download:* [{usr['response'][0]['filename']}]({usr['response'][0]['url']})
-• *Version:* {usr['response'][0]['version']}
-• *Device Changelog:* {usr['response'][0]['changelog_device']}
-"""
+        reply_text = (f" * Download dot OS for {device} *\n"
+
+                      f"• *Download:* [{filename}]({url})\n"
+                      f"• *Build size:* {buildsize}\n"
+                      f"• *Version:* {version}\n"
+                      f"• *Device Changelog:* {changelog}")
     elif fetch.status_code == 404:
         reply_text="Device not found"
     message.reply_text(reply_text, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
 
 def miui(bot: Bot, update: Update):
+    giturl = "https://raw.githubusercontent.com/XiaomiFirmwareUpdater/miui-updates-tracker/master/"
     message = update.effective_message
     device = message.text[len('/miui '):]
-    result = "*Recovery ROM*\n"
+    result = "*Recovery ROM*\n\n"
     result += "*Stable*\n"
-    stable_all = json.loads(get(
-        "https://raw.githubusercontent.com/XiaomiFirmwareUpdater/miui-updates-tracker/master/" +
-        "stable_recovery/stable_recovery.json").content)
+    stable_all = json.loads(get(giturl + "stable_recovery/stable_recovery.json").content)
     data = [i for i in stable_all if device == i['codename']]
-    for i in data:
-        result += "[" + i['filename'] + "](" + i['download'] + ")\n"
+    if len(data) != 0:
+        for i in data:
+            result += "[" + i['filename'] + "](" + i['download'] + ")\n\n"
 
-    result += "*Weekly*\n"
-    weekly_all = json.loads(get(
-        "https://raw.githubusercontent.com/XiaomiFirmwareUpdater/miui-updates-tracker/master/" +
-        "weekly_recovery/weekly_recovery.json").content)
-    data = [i for i in weekly_all if device == i['codename']]
-    for i in data:
-        result += "[" + i['filename'] + "](" + i['download'] + ")\n"
+        result += "*Weekly*\n"
+        weekly_all = json.loads(get(giturl + "weekly_recovery/weekly_recovery.json").content)
+        data = [i for i in weekly_all if device == i['codename']]
+        for i in data:
+            result += "[" + i['filename'] + "](" + i['download'] + ")"
+    else:
+        result = "Couldn't find any device matching your query."
 
     message.reply_text(result, parse_mode=ParseMode.MARKDOWN)
 
