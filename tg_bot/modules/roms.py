@@ -1,18 +1,16 @@
-import subprocess
 import html
 import json
-import random
 import time
 from datetime import datetime
 from typing import Optional, List
-from hurry.filesize import size
+from hurry.filesize import size as sizee
 
 from telegram import Message, Chat, Update, Bot, MessageEntity
-from telegram import ParseMode
+from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import CommandHandler, run_async, Filters
 from telegram.utils.helpers import escape_markdown, mention_html
 
-from tg_bot import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, WHITELIST_USERS, BAN_STICKER, LOGGER
+from tg_bot import dispatcher, LOGGER
 from tg_bot.__main__ import GDPR
 from tg_bot.__main__ import STATS, USER_INFO
 from tg_bot.modules.disable import DisableAbleCommandHandler
@@ -32,22 +30,34 @@ LOGGER.info("Original Android Modules by @peaktogoo on Telegram")
 def pixys(bot: Bot, update: Update):
     message = update.effective_message
     device = message.text[len('/pixys '):]
+
+    if device == '':
+        reply_text = "Please type your device **codename** into it!\nFor example, `/pixys tissot`"
+        message.reply_text(reply_text, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+        return
+
     fetch = get(f'https://raw.githubusercontent.com/PixysOS-Devices/official_devices/master/{device}/build.json')
     if fetch.status_code == 200:
         usr = fetch.json()
         response = usr['response'][0]
         filename = response['filename']
         url = response['url']
-        buildsize = response['size']
+        buildsize_a = response['size']
+        buildsize_b = sizee(int(buildsize_a))
         romtype = response['romtype']
         version = response['version']
 
         reply_text = (f" * Download Pixys OS for {device} *\n"
 
                       f"• *Download:* [{filename}]({url})\n"
-                      f"• *Build size:* {buildsize}\n"
+                      f"• *Build size:* {buildsize_b}\n"
                       f"• *Version:* {version}\n"
                       f"• *Rom Type:* {romtype}")
+
+        keyboard = [[InlineKeyboardButton(text="Click to Download", url=f"{url}")]]
+        message.reply_text(reply_text, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+        return
+
     elif fetch.status_code == 404:
         reply_text = "Device not found."
     message.reply_text(reply_text, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
@@ -56,22 +66,34 @@ def pixys(bot: Bot, update: Update):
 def superior(bot: Bot, update: Update):
     message = update.effective_message
     device = message.text[len('/superior '):]
+
+    if device == '':
+        reply_text = "Please type your device **codename** into it!\nFor example, `/superior whyred`"
+        message.reply_text(reply_text, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+        return
+
     fetch = get(f'https://raw.githubusercontent.com/SuperiorOS/official_devices/pie/{device}.json')
     if fetch.status_code == 200:
         usr = fetch.json()
         response = usr['response'][0]
         filename = response['filename']
         url = response['url']
-        buildsize = response['size']
+        buildsize_a = response['size']
+        buildsize_b = sizee(int(buildsize_a))
         romtype = response['romtype']
         version = response['version']
 
         reply_text = (f" * Download Superior OS for {device} *\n"
 
                       f"• *Download:* [{filename}]({url})\n"
-                      f"• *Build size:* {buildsize}\n"
+                      f"• *Build size:* {buildsize_b}\n"
                       f"• *Version:* {version}\n"
                       f"• *Rom Type:* {romtype}")
+
+        keyboard = [[InlineKeyboardButton(text="Click to Download", url=f"{url}")]]
+        message.reply_text(reply_text, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+        return
+
     elif fetch.status_code == 404:
         reply_text = "Device not found."
     message.reply_text(reply_text, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
@@ -81,22 +103,34 @@ def superior(bot: Bot, update: Update):
 def dot(bot: Bot, update: Update):
     message = update.effective_message
     device = message.text[len('/dot '):]
+
+    if device == '':
+        reply_text = "Please type your device **codename** into it!\nFor example, `/dotos tissot`"
+        message.reply_text(reply_text, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+        return
+
     fetch = get(f'https://raw.githubusercontent.com/DotOS/ota_config/dot-p/{device}.json')
     if fetch.status_code == 200:
         usr = fetch.json()
         response = usr['response'][0]
         filename = response['filename']
         url = response['url']
-        buildsize = response['size']
+        buildsize_a = response['size']
+        buildsize_b = sizee(int(buildsize_a))
         version = response['version']
         changelog = response['changelog_device']
 
         reply_text = (f" * Download dot OS for {device} *\n"
 
                       f"• *Download:* [{filename}]({url})\n"
-                      f"• *Build size:* {buildsize}\n"
+                      f"• *Build size:* {buildsize_b}\n"
                       f"• *Version:* {version}\n"
                       f"• *Device Changelog:* {changelog}")
+
+        keyboard = [[InlineKeyboardButton(text="Click to Download", url=f"{url}")]]
+        message.reply_text(reply_text, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+        return
+
     elif fetch.status_code == 404:
         reply_text="Device not found"
     message.reply_text(reply_text, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
