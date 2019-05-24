@@ -27,42 +27,6 @@ from requests import get
 LOGGER.info("Original Android Modules by @peaktogoo on Telegram")
 
 @run_async
-def pixys(bot: Bot, update: Update):
-    message = update.effective_message
-    device = message.text[len('/pixys '):]
-
-    if device == '':
-        reply_text = "Please type your device **codename** into it!\nFor example, `/pixys tissot`"
-        message.reply_text(reply_text, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
-        return
-
-    fetch = get(f'https://raw.githubusercontent.com/PixysOS-Devices/official_devices/master/{device}/build.json')
-    if fetch.status_code == 200:
-        usr = fetch.json()
-        response = usr['response'][0]
-        filename = response['filename']
-        url = response['url']
-        buildsize_a = response['size']
-        buildsize_b = sizee(int(buildsize_a))
-        romtype = response['romtype']
-        version = response['version']
-
-        reply_text = (f" * Download Pixys OS for {device} *\n"
-
-                      f"• *Download:* [{filename}]({url})\n"
-                      f"• *Build size:* {buildsize_b}\n"
-                      f"• *Version:* {version}\n"
-                      f"• *Rom Type:* {romtype}")
-
-        keyboard = [[InlineKeyboardButton(text="Click to Download", url=f"{url}")]]
-        message.reply_text(reply_text, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
-        return
-
-    elif fetch.status_code == 404:
-        reply_text = "Device not found."
-    message.reply_text(reply_text, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
-
-@run_async
 def superior(bot: Bot, update: Update):
     message = update.effective_message
     device = message.text[len('/superior '):]
@@ -83,14 +47,12 @@ def superior(bot: Bot, update: Update):
         romtype = response['romtype']
         version = response['version']
 
-        reply_text = (f" * Download Superior OS for {device} *\n"
+        reply_text = (f"• *Package Name:* `{filename}`\n"
+                      f"• *Build size:* `{buildsize_b}`\n"
+                      f"• *Version:* `{version}`\n"
+                      f"• *Rom Type:* `{romtype}`")
 
-                      f"• *Download:* [{filename}]({url})\n"
-                      f"• *Build size:* {buildsize_b}\n"
-                      f"• *Version:* {version}\n"
-                      f"• *Rom Type:* {romtype}")
-
-        keyboard = [[InlineKeyboardButton(text="Click to Download", url=f"{url}")]]
+        keyboard = [[InlineKeyboardButton(text="Click Here to Download", url=f"{url}")]]
         message.reply_text(reply_text, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
         return
 
@@ -98,42 +60,6 @@ def superior(bot: Bot, update: Update):
         reply_text = "Device not found."
     message.reply_text(reply_text, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
 
-
-@run_async
-def dot(bot: Bot, update: Update):
-    message = update.effective_message
-    device = message.text[len('/dot '):]
-
-    if device == '':
-        reply_text = "Please type your device **codename** into it!\nFor example, `/dotos tissot`"
-        message.reply_text(reply_text, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
-        return
-
-    fetch = get(f'https://raw.githubusercontent.com/DotOS/ota_config/dot-p/{device}.json')
-    if fetch.status_code == 200:
-        usr = fetch.json()
-        response = usr['response'][0]
-        filename = response['filename']
-        url = response['url']
-        buildsize_a = response['size']
-        buildsize_b = sizee(int(buildsize_a))
-        version = response['version']
-        changelog = response['changelog_device']
-
-        reply_text = (f" * Download dot OS for {device} *\n"
-
-                      f"• *Download:* [{filename}]({url})\n"
-                      f"• *Build size:* {buildsize_b}\n"
-                      f"• *Version:* {version}\n"
-                      f"• *Device Changelog:* {changelog}")
-
-        keyboard = [[InlineKeyboardButton(text="Click to Download", url=f"{url}")]]
-        message.reply_text(reply_text, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
-        return
-
-    elif fetch.status_code == 404:
-        reply_text="Device not found"
-    message.reply_text(reply_text, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
 
 def miui(bot: Bot, update: Update):
     giturl = "https://raw.githubusercontent.com/XiaomiFirmwareUpdater/miui-updates-tracker/master/"
@@ -159,8 +85,6 @@ def miui(bot: Bot, update: Update):
 
 
 __help__ = """
- - /dot <device>: Get the DotOS Rom
- - /pixys <device>: Get the Pixys Rom
  - /superior <device>: Get the Superior OS Rom
  - /miui <stable/weekly>: Get the weekly or Stable Firmwares
 """
@@ -169,11 +93,7 @@ __mod_name__ = "Roms"
 
 
 MIUI_HANDLER = DisableAbleCommandHandler("miui", miui, admin_ok=True)
-DOTOS_HANDLER = DisableAbleCommandHandler("dot", dot, admin_ok=True)
-PIXYS_HANDLER = DisableAbleCommandHandler("pixys", pixys, admin_ok=True)
 SUPERIOR_HANDLER = DisableAbleCommandHandler("superior", superior, admin_ok=True)
 
 dispatcher.add_handler(MIUI_HANDLER)
-dispatcher.add_handler(DOTOS_HANDLER)
-dispatcher.add_handler(PIXYS_HANDLER)
 dispatcher.add_handler(SUPERIOR_HANDLER)
