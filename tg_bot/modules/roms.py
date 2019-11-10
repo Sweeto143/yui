@@ -36,7 +36,7 @@ def superior(bot: Bot, update: Update):
         message.reply_text(reply_text, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
         return
 
-    fetch = get(f'https://raw.githubusercontent.com/SuperiorOS/official_devices/pie/builds/{device}.json')
+    fetch = get(f'https://raw.githubusercontent.com/SuperiorOS/official_devices/ten/builds/{device}.json')
     if fetch.status_code == 200:
         usr = fetch.json()
         response = usr['response'][0]
