@@ -41,16 +41,14 @@ def superior(bot: Bot, update: Update):
         usr = fetch.json()
         response = usr['response'][0]
         filename = response['filename']
-        url = response['url']
+        url = response['download']
         buildsize_a = response['size']
         buildsize_b = sizee(int(buildsize_a))
-        romtype = response['romtype']
         version = response['version']
 
         reply_text = (f"• *Package Name:* `{filename}`\n"
                       f"• *Build size:* `{buildsize_b}`\n"
-                      f"• *Version:* `{version}`\n"
-                      f"• *Rom Type:* `{romtype}`")
+                      f"• *Version:* `{version}`")
 
         keyboard = [[InlineKeyboardButton(text="Click Here to Download", url=f"{url}")]]
         message.reply_text(reply_text, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
