@@ -24,7 +24,23 @@ from requests import get
 # This module was inspired by Android Helper Bot by Vachounet.
 # None of the code is taken from the bot itself, to avoid any more confusion.
 
-LOGGER.info("Original Android Modules by @peaktogoo on Telegram")
+LOGGER.info("Original Android Modules by @peaktogoo on Telegram, modified by @HitaloSama on Telegram")
+GITHUB = 'https://github.com'
+
+@run_async
+def magisk(bot, update):
+    url = 'https://raw.githubusercontent.com/topjohnwu/magisk_files/'
+    releases = ""
+    for type, branch in {"Stable":["master/stable","master"], "Beta":["master/beta","master"], "Canary (release)":["canary/release","canary"], "Canary (debug)":["canary/debug","canary"]}.items():
+        data = get(url + branch[0] + '.json').json()
+        releases += f'*{type}*: \n' \
+                    f'• [Changelog](https://github.com/topjohnwu/magisk_files/blob/{branch[1]}/notes.md)\n' \
+                    f'• Zip - [{data["magisk"]["version"]}-{data["magisk"]["versionCode"]}]({data["magisk"]["link"]}) \n' \
+                    f'• App - [{data["app"]["version"]}-{data["app"]["versionCode"]}]({data["app"]["link"]}) \n' \
+                    f'• Uninstaller - [{data["magisk"]["version"]}-{data["magisk"]["versionCode"]}]({data["uninstaller"]["link"]})\n\n'
+
+    update.message.reply_text("*Latest Magisk Releases:*\n{}".format(releases),
+                              parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
 
 @run_async
 def superior(bot: Bot, update: Update):
@@ -85,6 +101,7 @@ def miui(bot: Bot, update: Update):
 __help__ = """
  - /superior <device>: Get the Superior OS Rom
  - /miui <stable/weekly>: Get the weekly or Stable Firmwares
+ - /magisk: Get the latest magisk release for Stable/Beta/Canary.
 """
 
 __mod_name__ = "Roms"
@@ -92,6 +109,8 @@ __mod_name__ = "Roms"
 
 MIUI_HANDLER = DisableAbleCommandHandler("miui", miui, admin_ok=True)
 SUPERIOR_HANDLER = DisableAbleCommandHandler("superior", superior, admin_ok=True)
+MAGISK_HANDLER = CommandHandler("magisk", magisk)
 
 dispatcher.add_handler(MIUI_HANDLER)
 dispatcher.add_handler(SUPERIOR_HANDLER)
+dispatcher.add_handler(MAGISK_HANDLER)
