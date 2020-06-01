@@ -57,7 +57,7 @@ def superior(bot: Bot, update: Update):
         usr = fetch.json()
         response = usr['response'][0]
         filename = response['filename']
-        url = response['download']
+        url = response['url']
         buildsize_a = response['size']
         buildsize_b = sizee(int(buildsize_a))
         version = response['version']
